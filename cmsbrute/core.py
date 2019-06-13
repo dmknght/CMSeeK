@@ -18,14 +18,11 @@ def analysis(form):
          #    return ([uint_formID, txtSubmitControl[0]], [txtPasswdControl[0]])
    return False
 
-
-
 def getLoginForm(objBrowser):
    loginFields = False
-   for fid in range(0, 99):
+   for fid, form in enumerate(objBrowser.forms()):
       try:
-         objBrowser.select_form(nr = fid)
-         loginFields = analysis(objBrowser.get_current_form().get_info())
+         loginFields = analysis(form)
 
          if loginFields:
             textField, passField = loginFields

