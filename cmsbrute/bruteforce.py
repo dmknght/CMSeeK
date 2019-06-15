@@ -50,7 +50,6 @@ def check(url):
       # OPENING URL, DEBUG MSG HERE
       result = getLoginForm(browser)
    except Exception as error:
-      print(error)
       # PRINT ERROR HERE
       result = False
    finally:
@@ -71,11 +70,11 @@ def start(url, userlist, passlist, threads = 16):
          # progress_bar(sending, completed, total)
          thread.join()
 
-   def try_login(url, userlist, passlist, result):
+   def try_login(url, username, password, result):
       # CREATE NEW BROWSER FOR EACH LOGIN. THIS IS A MUST DO
       for cred in list(result.queue):
-         if tryUsername == cred[1]:
-               return True
+         if username == cred[1]:
+            return True
 
       try:
          browser = createBrowser()
@@ -86,6 +85,7 @@ def start(url, userlist, passlist, threads = 16):
          browser[formPass] = password
          # SUBMIT 
          browser.submit_selected()
+         print("Trying: [%s:%s]" %(username, password))
          # check condition here
          # HAS FORM
          check_form = getLoginForm(browser)
@@ -97,6 +97,7 @@ def start(url, userlist, passlist, threads = 16):
       #    print("Found: [%s:%s]" %(username, password))
       #    break
       except Exception as error:
+         print(error)
          # PRINT ERROR
          pass
       # ADD MORE CONDITION HERE
@@ -110,17 +111,21 @@ def start(url, userlist, passlist, threads = 16):
       import queue, threading
       result, pool = queue.Queue(), []
 
+
       for username in userlist:
          for password in passlist:
             if len(pool) == threads:
                run_threads(pool)
                del pool[:]
-            worker = threading.Threads(
+            worker = threading.Thread(
                target = try_login,
                args = (url, username, password, result)
             )
             worker.daemon = True
             pool.append(worker)
 
+
       run_threads(pool)
       del pool[:]
+
+   print("[*] Completed")

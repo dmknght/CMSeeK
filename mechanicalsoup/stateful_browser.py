@@ -181,7 +181,10 @@ class StatefulBrowser(Browser):
         for form in self.get_current_page().find_all('form'):
             info = "<%s[%s]>\n" %(form.get('method'), form.get('action'))
             for input in form.find_all(("input", "textarea", "select", "button")):
-                fType = input.attrs['type']
+                try:
+                    fType = input.attrs['type']
+                except:
+                    fType = None
                 try:
                     fValue = input.attrs['value']
                 except:
@@ -189,9 +192,13 @@ class StatefulBrowser(Browser):
                 try:
                     fID = input.attrs['id']
                 except:
-                    fID = input.attrs['name']
+                    fID = None
+                try:
+                    fName = input.attrs['name']
+                except:
+                    fName = None
+                fID = fID if fID else fName
                 info += "  %s(%s)=\'%s\'\n" %(fType, fID, fValue)
-
             yield info
 
     def select_form(self, selector="form", nr=0):
